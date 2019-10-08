@@ -1,0 +1,88 @@
+CREATE TABLE IF NOT EXISTS `mydb`.`aluno` (
+  `matricula` INT NOT NULL,
+  `nome` VARCHAR(45) NULL,
+  PRIMARY KEY (`matricula`))
+
+CREATE TABLE IF NOT EXISTS `mydb`.`avaliacao` (
+  `codigo` INT NOT NULL,
+  `valor` INT NULL,
+  PRIMARY KEY (`codigo`))
+
+CREATE TABLE IF NOT EXISTS `mydb`.`professor` (
+  `codigo` INT NOT NULL,
+  `nome` VARCHAR(45) NULL,
+  PRIMARY KEY (`codigo`))
+
+CREATE TABLE IF NOT EXISTS `mydb`.`disciplina` (
+  `codigo` INT NOT NULL,
+  `descricao` VARCHAR(45) NULL,
+  `professor_codigo` INT NOT NULL,
+  PRIMARY KEY (`codigo`),
+  INDEX `fk_disciplina_professor1_idx` (`professor_codigo` ASC) VISIBLE,
+  CONSTRAINT `fk_disciplina_professor1`
+    FOREIGN KEY (`professor_codigo`)
+    REFERENCES `mydb`.`professor` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+CREATE TABLE IF NOT EXISTS `mydb`.`diario` (
+  `codigo` INT NOT NULL,
+  `disciplina_codigo` INT NOT NULL,
+  PRIMARY KEY (`codigo`),
+  INDEX `fk_diario_disciplina1_idx` (`disciplina_codigo` ASC) VISIBLE,
+  CONSTRAINT `fk_diario_disciplina1`
+    FOREIGN KEY (`disciplina_codigo`)
+    REFERENCES `mydb`.`disciplina` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+CREATE TABLE IF NOT EXISTS `mydb`.`aluno_has_diario` (
+  `aluno_matricula` INT NOT NULL,
+  `diario_codigo` INT NOT NULL,
+  PRIMARY KEY (`aluno_matricula`, `diario_codigo`),
+  INDEX `fk_aluno_has_diario_diario1_idx` (`diario_codigo` ASC) VISIBLE,
+  INDEX `fk_aluno_has_diario_aluno1_idx` (`aluno_matricula` ASC) VISIBLE,
+  CONSTRAINT `fk_aluno_has_diario_aluno1`
+    FOREIGN KEY (`aluno_matricula`)
+    REFERENCES `mydb`.`aluno` (`matricula`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_aluno_has_diario_diario1`
+    FOREIGN KEY (`diario_codigo`)
+    REFERENCES `mydb`.`diario` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+CREATE TABLE IF NOT EXISTS `mydb`.`aluno_has_avaliacao` (
+  `aluno_matricula` INT NOT NULL,
+  `avaliacao_codigo` INT NOT NULL,
+  PRIMARY KEY (`aluno_matricula`, `avaliacao_codigo`),
+  INDEX `fk_aluno_has_avaliacao_avaliacao1_idx` (`avaliacao_codigo` ASC) VISIBLE,
+  INDEX `fk_aluno_has_avaliacao_aluno1_idx` (`aluno_matricula` ASC) VISIBLE,
+  CONSTRAINT `fk_aluno_has_avaliacao_aluno1`
+    FOREIGN KEY (`aluno_matricula`)
+    REFERENCES `mydb`.`aluno` (`matricula`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_aluno_has_avaliacao_avaliacao1`
+    FOREIGN KEY (`avaliacao_codigo`)
+    REFERENCES `mydb`.`avaliacao` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+
+CREATE TABLE IF NOT EXISTS `mydb`.`avaliacao_has_diario` (
+  `avaliacao_codigo` INT NOT NULL,
+  `diario_codigo` INT NOT NULL,
+  PRIMARY KEY (`avaliacao_codigo`, `diario_codigo`),
+  INDEX `fk_avaliacao_has_diario_diario1_idx` (`diario_codigo` ASC) VISIBLE,
+  INDEX `fk_avaliacao_has_diario_avaliacao1_idx` (`avaliacao_codigo` ASC) VISIBLE,
+  CONSTRAINT `fk_avaliacao_has_diario_avaliacao1`
+    FOREIGN KEY (`avaliacao_codigo`)
+    REFERENCES `mydb`.`avaliacao` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_avaliacao_has_diario_diario1`
+    FOREIGN KEY (`diario_codigo`)
+    REFERENCES `mydb`.`diario` (`codigo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
